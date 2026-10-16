@@ -23,9 +23,15 @@ jobs:
             rm launcher-nova-edition.zip
           fi
           ls -la
-          ls -la app/src/main/java/com/emre/customlauncher/ || true
+          echo "--- app/build.gradle var mi? ---"
+          ls -la app/ || echo "app yok"
 
-      - name: Setup Gradle
+      - name: Install Android SDK 34
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager --install "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+
+      - name: Setup Gradle 8.5
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 8.5
@@ -36,5 +42,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: lawnchair-nova-apk
+          name: custom-launcher-apk
           path: app/build/outputs/apk/debug/*.apk
