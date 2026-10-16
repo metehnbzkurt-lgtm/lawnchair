@@ -8,30 +8,33 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
+      - uses: actions/checkout@v4
 
-      - name: Setup JDK 21
+      - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '17'
           distribution: 'temurin'
+
+      - name: Unzip project
+        run: |
+          if [ -f launcher-nova-edition.zip ]; then
+            unzip -o launcher-nova-edition.zip
+            rm launcher-nova-edition.zip
+          fi
+          ls -la
+          ls -la app/src/main/java/com/emre/customlauncher/ || true
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.5
 
-      - name: Accept licenses
-        run: yes | sdkmanager --licenses || true
-
-      - name: Build Debug APK
-        run: gradle assembleDebug --stacktrace
+      - name: Build APK
+        run: gradle :app:assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: lawnchair-apk
-          path: |
-            **/build/outputs/apk/debug/*.apk
-            **/build/outputs/apk/**/*.apk
+          name: lawnchair-nova-apk
+          path: app/build/outputs/apk/debug/*.apk
