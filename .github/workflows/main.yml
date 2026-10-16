@@ -16,6 +16,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Setup Android SDK Path
+        run: |
+          echo "ANDROID_HOME=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+          echo "ANDROID_SDK_ROOT=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+          echo "/usr/local/lib/android/sdk/cmdline-tools/latest/bin" >> $GITHUB_PATH
+          echo "/usr/local/lib/android/sdk/platform-tools" >> $GITHUB_PATH
+          echo "/usr/local/lib/android/sdk/build-tools/34.0.0" >> $GITHUB_PATH
+
       - name: Unzip project
         run: |
           if [ -f launcher-nova-edition.zip ]; then
@@ -23,10 +31,8 @@ jobs:
             rm launcher-nova-edition.zip
           fi
           ls -la
-          echo "--- app/build.gradle var mi? ---"
-          ls -la app/ || echo "app yok"
 
-      - name: Install Android SDK 34
+      - name: Install SDK 34
         run: |
           yes | sdkmanager --licenses || true
           sdkmanager --install "platforms;android-34" "build-tools;34.0.0" "platform-tools"
